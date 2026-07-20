@@ -1,15 +1,21 @@
+from sqlalchemy.orm import Session
+
 from app.models.book import Book
-
-books = [
-    Book(id=1, title="Clean Code", author="Robert C. Martin"),
-    Book(id=2, title="The Phoenix Project", author="Gene Kim"),
-]
+from app.schemas.book import BookCreate
 
 
-def get_all_books():
-    return books
+def get_books(db: Session):
+    return db.query(Book).all()
 
 
-def add_book(book: Book):
-    books.append(book)
-    return book
+def create_book(db: Session, book: BookCreate):
+    new_book = Book(
+        title=book.title,
+        author=book.author
+    )
+
+    db.add(new_book)
+    db.commit()
+    db.refresh(new_book)
+
+    return new_book

@@ -1,15 +1,21 @@
-from fastapi import APIRouter
-from app.models.book import Book
-from app.services.book_service import get_all_books, add_book
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/books", tags=["Books"])
+from app.dependencies import get_db
+from app.schemas.book import BookCreate, BookResponse
+from app.services.book_service import create_book, get_books
+
+router = APIRouter(
+    prefix="/books",
+    tags=["Books"]
+)
 
 
-@router.get("")
-def get_books():
-    return get_all_books()
+@router.get("", response_model=list[BookResponse])
+def read_books(db: Session = Depends(get_db)):
+    return get_books(db)
 
 
-@router.post("")
-def create_book(book: Book):
-    return add_book(book)
+@router.post("", response_model=BookResponse)
+def add_book(book: BookCreate, db: Session = Depends(get_db)):
+    return create_book(db, book)
