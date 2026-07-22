@@ -63,3 +63,11 @@ jobs:
 
           docker push \
             768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:${{ github.sha }}
+   
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster book-api-cluster \
+            --service book-api-service \
+            --force-new-deployment \
+            --region eu-central-1
