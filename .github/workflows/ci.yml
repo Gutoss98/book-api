@@ -43,17 +43,23 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-
+      
       - name: Build Docker image
         run: |
-          docker build -t book-api:${{ github.sha }} .
+          docker build -t book-api:latest .
 
       - name: Tag image
         run: |
-          docker tag book-api:${{ github.sha }} \
-          768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:${{ github.sha }}
+          docker tag book-api:latest \
+            768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:latest
+
+          docker tag book-api:latest \
+            768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:${{ github.sha }}
 
       - name: Push image to Amazon ECR
         run: |
           docker push \
-          768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:${{ github.sha }}
+            768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:latest
+
+          docker push \
+            768309077042.dkr.ecr.eu-central-1.amazonaws.com/book-api:${{ github.sha }}
